@@ -1,0 +1,58 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    background-color: aliceblue;
+    padding: 15px 40px;
+}
+
+.header button{
+    height: 40px;
+}
+
+.query label{
+    display: inline-block;
+    margin: 15px
+}
+.query button{
+    margin-left: 20px;
+}
+
+.query h1{
+    margin: 30px 0 20px 40px;
+}
+
+.query form{
+    margin-left: 27px;
+}
+
+
+
+.queryResult {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .queryResult th, .queryResult td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .queryResult th {
+    background-color: #f2f2f2;
+  }
+  
+.subscribeButton{
+    width: 100px;
+    height: 40px;
+    font-size: 16px;
+}
+
+.querySection{
+    margin: 20px 20px 0px 45px;
+}
+
+.subscribeSection{
+    margin: 20px 20px 0px 45px;
+}
