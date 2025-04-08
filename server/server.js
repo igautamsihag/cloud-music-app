@@ -148,7 +148,7 @@ app.delete("/api/unsubscribe", async (req, res) => {
   
 
 // User Registration (Sign Up) without password encryption
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
     const { email, username, password } = req.body;
 
     // Check if email already exists in the DynamoDB table
@@ -176,7 +176,7 @@ app.post("/register", async (req, res) => {
 });
 
 // User Login without password encryption
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     const params = {
