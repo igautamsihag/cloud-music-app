@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: [
     "http://localhost:3000", // Local frontend
-    "http://ec2-13-218-48-255.compute-1.amazonaws.com", // EC2 frontend
+    "http://ec2-44-211-177-173.compute-1.amazonaws.com", // EC2 frontend
   ],
   credentials: true,
 };
