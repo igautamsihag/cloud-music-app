@@ -2,14 +2,22 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { dynamoDB, TableName, getItem, putItem, checkIfExists } = require("./dynamodb");  
-const queryRoutes = require("./query");
 const { DynamoDBClient, UpdateItemCommand, GetItemCommand } = require("@aws-sdk/client-dynamodb");
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use("/api", queryRoutes);
+const queryRoutes = require("./query");
 const PORT = process.env.PORT || 5000;
 
+const corsOptions = {
+  origin: [
+    "http://localhost:3000", // Local frontend
+    "http://ec2-52-87-243-1.compute-1.amazonaws.com", // EC2 frontend
+  ],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use("/api", queryRoutes);
 
 const client = new DynamoDBClient({
     region: "us-east-1",
@@ -210,56 +218,3 @@ app.post("/api/login", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
-
-// const express = require("express");
-// const cors = require("cors");
-// const bodyParser = require("body-parser");
-// const { getItem, putItem, checkIfExists } = require("./dynamodb");
-// const queryRoutes = require("./query");
-
-// const app = express();
-// app.use(cors());
-// app.use(bodyParser.json());
-// app.use("/api", queryRoutes);
-
-// const PORT = process.env.PORT || 5000;
-
-// // User Registration (Sign Up)
-// app.post("/register", async (req, res) => {
-//     const { email, username, password } = req.body;
-
-//     try {
-//         const exists = await checkIfExists("login", email);  // Check if email exists
-//         if (exists) {
-//             return res.status(400).json({ message: "The email already exists" });
-//         }
-
-//         const newUser = { email, username, password };
-//         await putItem("login", newUser);  // Store user info
-//         res.status(201).json({ message: "User registered successfully!" });
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to register user" });
-//     }
-// });
-
-// // User Login
-// app.post("/login", async (req, res) => {
-//     const { email, password } = req.body;
-
-//     try {
-//         const user = await getItem("login", { email });
-//         if (!user || user.password !== password) {
-//             return res.status(400).json({ message: "Invalid email or password" });
-//         }
-//         res.status(200).json({ message: "Login successful", user });
-//     } catch (error) {
-//         res.status(500).json({ error: "Failed to login" });
-//     }
-// });
-
-// // Start server
-// app.listen(PORT, () => {
-//     console.log(`Server running on port ${PORT}`);
-
-//

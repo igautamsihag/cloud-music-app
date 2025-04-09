@@ -7,6 +7,7 @@ const dynamoDBClient = new DynamoDBClient({ region: "us-east-1" });
 const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 router.post("/query", async (req, res) => {
+  console.log("Query received:", req.body);
   const { title, year, artist, album } = req.body;
 
   try {

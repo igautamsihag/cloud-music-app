@@ -42,7 +42,7 @@ export default function Dashboard(){
         if (!user?.email) return;
     
         try {
-          const response = await fetch(`http://localhost:5000/api/subscriptions?email=${user.email}`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/subscriptions?email=${user.email}`);
           const data = await response.json();
           setSubscribedSongs(data);
         } catch (error) {
@@ -73,7 +73,8 @@ export default function Dashboard(){
         setError("");
     
         try {
-          const response = await fetch("http://localhost:5000/api/query", {
+          console.log("Sending request to:", `${process.env.NEXT_PUBLIC_API_BASE}/api/query`);
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/query`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -108,7 +109,7 @@ export default function Dashboard(){
         }
       
         try {
-          const response = await fetch("http://localhost:5000/api/subscribe", {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/subscribe`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -150,7 +151,7 @@ export default function Dashboard(){
         });
       
         try {
-          const response = await fetch(`http://localhost:5000/api/unsubscribe?${queryParams}`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/unsubscribe?${queryParams}`, {
             method: "DELETE",
           });
       
