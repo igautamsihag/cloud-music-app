@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: [
     "http://localhost:3000", // Local frontend
-    "http://ec2-44-211-177-173.compute-1.amazonaws.com", // EC2 frontend
+    "http://ec2-44-211-177-173.compute-1.amazonaws.com:3000", // EC2 frontend
   ],
   credentials: true,
 };
@@ -213,7 +213,9 @@ app.post("/api/login", async (req, res) => {
     }
 });
 
-
+app.get('api/test', (req, res) => {
+  res.json({message: 'API is working'});
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

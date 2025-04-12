@@ -19,13 +19,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
+      console.log("Restored user from localStorage:", storedUser);
       setUser(JSON.parse(storedUser)); // Parse and set user data from localStorage
     }
   }, []);
 
   const login = (userData: User) => {
-    setUser(userData);
+    console.log("Setting user in AuthContext:", userData);
     localStorage.setItem("user", JSON.stringify(userData)); // Persist login
+    setUser(userData);
   };
 
   const logout = () => {

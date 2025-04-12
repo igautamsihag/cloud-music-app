@@ -26,6 +26,9 @@ export default function Dashboard(){
     const { user, logout } = useAuth();
     const router = useRouter();
 
+    // At the top of your Dashboard function
+    console.log("User data in Dashboard:", user);
+
 
     const getImageUrlFromS3 = (artistName: string) => {
       const bucketName = "artist-img-url-assignment"; // S3 bucket name
@@ -39,21 +42,30 @@ export default function Dashboard(){
 
     useEffect(() => {
       const fetchSubscribedSongs = async () => {
-        if (!user?.email) return;
+        if (!user?.email) {
+          console.error("User email is not available.");
+          return;
+        }
     
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/subscriptions?email=${user.email}`);
+          // Adjust the endpoint to use your local server.js API endpoint
+          const response = await fetch(`http://localhost:5000/api/subscriptions?email=${user.email}`);
           const data = await response.json();
-          setSubscribedSongs(data);
+    
+          if (response.ok) {
+            setSubscribedSongs(data); // Set subscribed songs
+          } else {
+            setError(data.message || "Failed to fetch subscriptions.");
+          }
         } catch (error) {
           console.error("Error fetching subscriptions:", error);
+          setError("Error fetching subscriptions.");
         }
       };
     
       fetchSubscribedSongs();
-    }, [user]); // Only dependent on `user`
+    }, [user]);
     
-
 
     const handleLogout = () => {
         logout();  
@@ -74,7 +86,7 @@ export default function Dashboard(){
     
         try {
           console.log("Sending request to:", `${process.env.NEXT_PUBLIC_API_BASE}/api/query`);
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/query`, {
+          const response = await fetch(`http://localhost:5000/api/query`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -108,51 +120,61 @@ export default function Dashboard(){
           return;
         }
       
+        const payload = {
+          email: user.email,
+          song: {
+            title: song.title,
+            artist: song.artist,
+            album: song.album,
+            year: song.year,
+          },
+        };
+      
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/subscribe`, {
+          const response = await fetch("https://wgoc8r7tkb.execute-api.us-east-1.amazonaws.com/Production/subscribe", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              email: user.email,  // Ensure user has an email property
-              song: {
-                title: song.title,
-                artist: song.artist,
-                album: song.album,
-                year: song.year,
-              },
-            }),
+            body: JSON.stringify(payload), // Still stringify it here
           });
       
           const data = await response.json();
+          console.log("Subscription response data:", data);
+      
           if (!response.ok) {
             setError(data.message || "Subscription failed.");
           } else {
-            setError("");
             alert("Successfully subscribed to the song!");
             setSubscribedSongs((prevSongs) => [...prevSongs, song]);
           }
-        } catch (error) {
-          console.error(error);
-          setError("Error subscribing.");
+        } catch (err) {
+          console.error("Error subscribing:", err);
+          setError("Subscription error");
         }
       };
-
+      
+      
       const handleUnsubscribe = async (song: Song) => {
         if (!user?.email) {
           setError("User not authenticated.");
           return;
         }
       
-        const queryParams = new URLSearchParams({
-          email: user.email,
-          title: song.title,
-        });
-      
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/unsubscribe?${queryParams}`, {
-            method: "DELETE",
+
+          const requestBody = JSON.stringify({
+            body: JSON.stringify({
+                email: user.email,
+                title: song.title,
+            }),
+        });
+          const response = await fetch("https://45ymo6344k.execute-api.us-east-1.amazonaws.com/Production/unsubscribe", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: requestBody,
           });
       
           const data = await response.json();
@@ -173,6 +195,13 @@ export default function Dashboard(){
           setError("Error unsubscribing.");
         }
       };
+      
+      
+      
+      
+      
+
+ 
       
       
       
