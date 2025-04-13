@@ -2,16 +2,14 @@ const { DynamoDBDocumentClient, PutCommand } = require('@aws-sdk/lib-dynamodb');
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const fs = require('fs');
 
-// Initialize DynamoDB client and document client with custom endpoint
 const dynamoDBClient = new DynamoDBClient({
-  region: 'us-east-1'  // Specify DynamoDB Local endpoint
+  region: 'us-east-1'  
 });
 const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
-// Read the data from JSON file
 const data = JSON.parse(fs.readFileSync('2025a1.json', 'utf8'));
 
-const run = async () => {
+const loadMusicData = async () => {
   for (const song of data.songs) {
     const params = {
       TableName: 'music',
@@ -20,17 +18,17 @@ const run = async () => {
         title: song.title.trim(),
         year: song.year,  
         album: song.album,
-        image_url: song.img_url,  // Use img_url as image_url
+        image_url: song.img_url,  
       },
     };
 
     try {
       await docClient.send(new PutCommand(params));
-      console.log(`Added song: ${song.title}`);
+      console.log(`Inserted song: ${song.title}`);
     } catch (err) {
-      console.error('Error adding song:', err);
+      console.error('Song insertion failed:', err);
     }
   }
 };
 
-run();
+loadMusicData();

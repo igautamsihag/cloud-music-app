@@ -36,24 +36,22 @@ const Login = () => {
     try {
       data = typeof rawData.body === "string" ? JSON.parse(rawData.body) : rawData.body;
     } catch {
-      console.error("Failed to parse rawData.body:", rawData.body);
+      console.error("Failed to convert rawData.body:", rawData.body);
       setError("Invalid response from server");
       return;
     }
   
-    console.log("Parsed login data:", data);
+    console.log("Converted login data:", data);
   
-    // Check if username is in the response
     if (data?.username) {
       const userData = {
         email: data.email,
         username: data.username,
       };
-      console.log("Username is da da da:", userData.username);
-      login(userData); // pass to AuthContext
+      login(userData); 
       router.push("/dashboard");
     } else {
-      setError("Login failed: Missing username");
+      setError("Task to login user was failed");
     }
   };
   

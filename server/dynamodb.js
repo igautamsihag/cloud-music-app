@@ -1,61 +1,55 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, GetCommand, PutCommand } = require('@aws-sdk/lib-dynamodb');
 
-// Initialize DynamoDB client
 const client = new DynamoDBClient({
-  region: "us-east-1", // Set your region here
- // Use the local DynamoDB instance if running locally
+  region: "us-east-1", 
 });
 
-// Create DynamoDB DocumentClient
 const dynamoDB = DynamoDBDocumentClient.from(client);
 
-// Function to get an item from DynamoDB
 const getItem = async (TableName, key) => {
   const params = {
     TableName,
-    Key: key, // The key to retrieve the item
+    Key: key,
   };
 
   try {
     const data = await dynamoDB.send(new GetCommand(params));
-    return data.Item; // Return the item retrieved
+    return data.Item; 
   } catch (error) {
-    console.error("Error retrieving item:", error);
-    throw error; // Propagate error
+    console.error("Task to get item failed:", error);
+    throw error; 
   }
 };
 
-// Function to put an item into DynamoDB
 const putItem = async (TableName, item) => {
   const params = {
     TableName,
-    Item: item, // The item to store in the table
+    Item: item, 
   };
 
   try {
     await dynamoDB.send(new PutCommand(params));
-    console.log("Item added successfully");
+    console.log("Task to add item was successful");
   } catch (error) {
-    console.error("Error adding item:", error);
-    throw error; // Propagate error
+    console.error("Task to add item failed:", error);
+    throw error; 
   }
 };
 
-// Function to check if an item exists
 const checkIfExists = async (TableName, email) => {
   const params = {
     TableName,
     Key: {
-      email, // Primary Key (email)
+      email, 
     },
   };
 
   try {
     const data = await dynamoDB.send(new GetCommand(params));
-    return data.Item !== undefined; // Return true if item exists
+    return data.Item !== undefined; 
   } catch (error) {
-    console.error("Error checking item existence:", error);
+    console.error("Task to check duplicate item failed:", error);
     throw error;
   }
 };

@@ -26,47 +26,15 @@ export default function Dashboard(){
     const { user, logout } = useAuth();
     const router = useRouter();
 
-    // At the top of your Dashboard function
-    console.log("User data in Dashboard:", user);
-
 
     const getImageUrlFromS3 = (artistName: string) => {
-      const bucketName = "artist-img-url-assignment"; // S3 bucket name
-      const region = "us-east-1"; // The region where the bucket is hosted
-      const encodedArtistName = artistName.replace(/\s+/g, '+').replace(/&/g, '%26');; // Remove spaces and encode
-      const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/artist-images/${encodedArtistName}.jpg`;
-    
+      const bucketName = "artist-img-url-assignment"; 
+      const region = "us-east-1"; 
+      const encodedArtistName = artistName.replace(/\s+/g, '+').replace(/&/g, '%26');; 
+      const imageUrl = `https://${bucketName}.s3.${region}.amazonaws.com/artist-images/${encodedArtistName}.jpg`;  
       return imageUrl;
     };
     
-
-    useEffect(() => {
-      const fetchSubscribedSongs = async () => {
-        if (!user?.email) {
-          console.error("User email is not available.");
-          return;
-        }
-    
-        try {
-          // Adjust the endpoint to use your local server.js API endpoint
-          const response = await fetch(`http://localhost:5000/api/subscriptions?email=${user.email}`);
-          const data = await response.json();
-    
-          if (response.ok) {
-            setSubscribedSongs(data); // Set subscribed songs
-          } else {
-            setError(data.message || "Failed to fetch subscriptions.");
-          }
-        } catch (error) {
-          console.error("Error fetching subscriptions:", error);
-          setError("Error fetching subscriptions.");
-        }
-      };
-    
-      fetchSubscribedSongs();
-    }, [user]);
-    
-
     const handleLogout = () => {
         logout();  
         router.push("/login");  
@@ -113,10 +81,9 @@ export default function Dashboard(){
         }
       };
 
-
       const handleSubscribe = async (song: Song) => {
         if (!user?.email) {
-          setError("User not authenticated.");
+          setError("Task to authenticate user failed.");
           return;
         }
       
@@ -136,7 +103,7 @@ export default function Dashboard(){
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(payload), // Still stringify it here
+            body: JSON.stringify(payload), 
           });
       
           const data = await response.json();
@@ -145,24 +112,46 @@ export default function Dashboard(){
           if (!response.ok) {
             setError(data.message || "Subscription failed.");
           } else {
-            alert("Successfully subscribed to the song!");
+            alert("Song subscribed successfully !");
             setSubscribedSongs((prevSongs) => [...prevSongs, song]);
           }
         } catch (err) {
-          console.error("Error subscribing:", err);
-          setError("Subscription error");
+          console.error("Task to subscribe song failed:", err);
+          setError("Task to subscribe song failed");
         }
       };
       
+      useEffect(() => {
+        const fetchSubscribedSongs = async () => {
+          if (!user?.email) {
+            console.error("User email is not available.");
+            return;
+          }
+      
+          try {
+            const response = await fetch(`http://localhost:5000/api/subscriptions?email=${user.email}`);
+            const data = await response.json();
+      
+            if (response.ok) {
+              setSubscribedSongs(data); 
+            } else {
+              setError(data.message || "Failed to fetch subscriptions.");
+            }
+          } catch (error) {
+            console.error("Task to get user song subscriptions failed:", error);
+            setError("Task to get user song subscriptions failed.");
+          }
+        };
+      
+        fetchSubscribedSongs();
+      }, [user]);
       
       const handleUnsubscribe = async (song: Song) => {
         if (!user?.email) {
-          setError("User not authenticated.");
+          setError("Task to authenticate user failed.");
           return;
-        }
-      
+        }      
         try {
-
           const requestBody = JSON.stringify({
             body: JSON.stringify({
                 email: user.email,
@@ -175,34 +164,23 @@ export default function Dashboard(){
               "Content-Type": "application/json",
             },
             body: requestBody,
-          });
-      
+          });      
           const data = await response.json();
       
           if (!response.ok) {
             setError(data.message || "Unsubscription failed.");
           } else {
             setError("");
-            alert("Successfully unsubscribed!");
-      
-            // Remove the unsubscribed song from state
+            alert("Song unsubscribed successfully!");
             setSubscribedSongs((prevSongs) =>
               prevSongs.filter((s) => s.title !== song.title)
             );
           }
         } catch (error) {
-          console.error("Error unsubscribing:", error);
-          setError("Error unsubscribing.");
+          console.error("Task to unsubscribe song failed:", error);
+          setError("Task to unsubscribe song failed.");
         }
       };
-      
-      
-      
-      
-      
-
- 
-      
       
       
     return(

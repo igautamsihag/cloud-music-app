@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 5000;
 
 const corsOptions = {
   origin: [
-    "http://localhost:3000", // Local frontend
-    "http://ec2-44-211-177-173.compute-1.amazonaws.com:3000", // EC2 frontend
+    "http://localhost:3000", 
+    "http://ec2-44-211-177-173.compute-1.amazonaws.com:3000", 
   ],
   credentials: true,
 };
@@ -25,7 +25,7 @@ const client = new DynamoDBClient({
   
   app.get("/api/subscriptions", async (req, res) => {
     const email = req.query.email;
-  
+
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
@@ -53,8 +53,8 @@ const client = new DynamoDBClient({
   
       res.json(subscriptions);
     } catch (error) {
-      console.error("Error fetching subscriptions:", error);
-      res.status(500).json({ message: "Error retrieving subscriptions." });
+      console.error("Task to get user subscriptions failed:", error);
+      res.status(500).json({ message: "Error occur while executing task of getting user subscriptions." });
     }
   });
 
@@ -86,30 +86,26 @@ const client = new DynamoDBClient({
 
       await client.send(new UpdateItemCommand(params));
 
-    res.json({ message: "Subscription successful!" });
+    res.json({ message: "Task to subscribe song was successful!" });
   } catch (error) {
-    console.error("Subscription error:", error);
-    res.status(500).json({ message: "Error subscribing to song." });
+    console.error("Task to subscribe song failed:", error);
+    res.status(500).json({ message: "Error occured while subscribing song." });
   }
 });
 
 
 app.delete("/api/unsubscribe", async (req, res) => {
     try {
-      const { email, title } = req.query; // Accept query parameters
+      const { email, title } = req.query; 
   
       if (!email || !title) {
         return res.status(400).json({ message: "Invalid request data" });
       }
-  
-      // Log email and title received
       console.log("Unsubscribe request for:", { email, title });
-  
-      // Fetch the user's subscription list from the 'login' table
       const params = {
-        TableName: "login",  // Correct table name
+        TableName: "login",  
         Key: {
-          email: { S: email },  // Use email as the partition key
+          email: { S: email },  
         },
       };
   
@@ -119,24 +115,20 @@ app.delete("/api/unsubscribe", async (req, res) => {
         console.log("User not found:", email);
         return res.status(404).json({ message: "User not found" });
       }
+      console.log("Subscribed songs of user are:", userSubscription.Item.subscriptions);
   
-      // Log the user's subscription data
-      console.log("User subscriptions:", userSubscription.Item.subscriptions);
-  
-      // Filter out the song that needs to be removed
       const updatedSongs = userSubscription.Item.subscriptions.L.filter(
         (song) => song.M.title.S !== title
       );
   
       if (updatedSongs.length === userSubscription.Item.subscriptions.L.length) {
-        console.log("Song not found in subscriptions:", title);
-        return res.status(404).json({ message: "Song not found in subscriptions" });
+        console.log("Song is  not present in the subscriptions list:", title);
+        return res.status(404).json({ message: "Song is  not present in the subscriptions list" });
       }
-  
-      // Update the database with the filtered list
+
       const updateParams = {
-        TableName: "login",  // Correct table name
-        Key: { email: { S: email } },  // Use email as the partition key
+        TableName: "login",  
+        Key: { email: { S: email } },  
         UpdateExpression: "SET subscriptions = :subscriptions",
         ExpressionAttributeValues: {
           ":subscriptions": { L: updatedSongs },
@@ -146,63 +138,56 @@ app.delete("/api/unsubscribe", async (req, res) => {
   
       await client.send(new UpdateItemCommand(updateParams));
   
-      console.log("Unsubscribed successfully:", { email, title });
-      res.json({ message: "Unsubscribed successfully" });
+      console.log("Task to unsubscribe the song was successful:", { email, title });
+      res.json({ message: "Task to unsubscribe the song was successful" });
     } catch (error) {
-      console.error("Error deleting subscription:", error);
-      res.status(500).json({ message: "Error unsubscribing" });
+      console.error("Task to unsubscribe the song failed:", error);
+      res.status(500).json({ message: "Task to unsubscribe the song failed" });
     }
   });
   
-
-// User Registration (Sign Up) without password encryption
 app.post("/api/register", async (req, res) => {
     const { email, username, password } = req.body;
 
-    // Check if email already exists in the DynamoDB table
     const exists = await checkIfExists(TableName, email);
     if (exists) {
-        return res.status(400).json({ message: "The email already exists" });
+        return res.status(400).json({ message: "This user email already exists" });
     }
 
     const params = {
         TableName,
         Item: {
-            email,      // Primary Key (email)
-            username,   // Username
-            password,   // Store password as plain text
+            email,     
+            username,   
+            password,   
         },
     };
 
     try {
-        // Use the putItem function to add the item
-        await putItem(TableName, params.Item);  // Call the updated putItem function
-        res.status(201).json({ message: "User registered successfully!" });
+        await putItem(TableName, params.Item);  
+        res.status(201).json({ message: "Task to register the user was successful!" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// User Login without password encryption
 app.post("/api/login", async (req, res) => {
     const { email, password } = req.body;
 
     const params = {
         TableName,
         Key: {
-            email,  // Primary Key (email)
+            email,  
         },
     };
 
     try {
-        // Use the getItem function to retrieve the item
-        const data = await getItem(TableName, params.Key);  // Call the updated getItem function
+        const data = await getItem(TableName, params.Key); 
 
         if (!data) {
             return res.status(400).json({ message: "Email or password is invalid!" });
         }
 
-        // Compare password (direct match, without hashing)
         if (password === data.password) {
             res.status(200).json({ message: "Login successful!", email: data.email, username: data.username  });
         } else {

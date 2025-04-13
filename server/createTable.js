@@ -1,20 +1,18 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { CreateTableCommand } = require('@aws-sdk/client-dynamodb');
 
-// Initialize DynamoDB client for local setup
 const client = new DynamoDBClient({
-  region: "us-east-1",  // Region is arbitrary for local testing  // Point to local DynamoDB instance
+  region: "us-east-1",  
 });
 
-// Function to create the table
 const createTable = async () => {
   const params = {
-    TableName: "login",  // Table name
+    TableName: "login",  
     KeySchema: [
-      { AttributeName: "email", KeyType: "HASH" },  // Partition key (email)
+      { AttributeName: "email", KeyType: "HASH" },  
     ],
     AttributeDefinitions: [
-      { AttributeName: "email", AttributeType: "S" },  // String type for email
+      { AttributeName: "email", AttributeType: "S" },  
     ],
     ProvisionedThroughput: {
       ReadCapacityUnits: 5,
@@ -24,9 +22,9 @@ const createTable = async () => {
 
   try {
     const data = await client.send(new CreateTableCommand(params));
-    console.log("Table created successfully:", data);
+    console.log("Login table was created successfully:", data);
   } catch (error) {
-    console.error("Error creating table:", error);
+    console.error("Login table creation failed:", error);
   }
 };
 

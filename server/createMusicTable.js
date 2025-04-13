@@ -5,8 +5,8 @@ const client = new DynamoDBClient({ region: 'us-east-1'});
 const params = {
   TableName: 'music',
   KeySchema: [
-    { AttributeName: 'artist', KeyType: 'HASH' }, // Partition Key
-    { AttributeName: 'title', KeyType: 'RANGE' }, // Sort Key
+    { AttributeName: 'artist', KeyType: 'HASH' }, 
+    { AttributeName: 'title', KeyType: 'RANGE' }, 
   ],
   AttributeDefinitions: [
     { AttributeName: 'artist', AttributeType: 'S' },
@@ -28,13 +28,13 @@ const params = {
   ProvisionedThroughput: { ReadCapacityUnits: 5, WriteCapacityUnits: 5 },
 };
 
-const run = async () => {
+const createTable = async () => {
   try {
     const data = await client.send(new CreateTableCommand(params));
-    console.log('Table created successfully:', data);
+    console.log('Music table was created successfully:', data);
   } catch (err) {
-    console.error('Unable to create table:', err);
+    console.error('Music Table creation failed:', err);
   }
 };
 
-run();
+createTable();

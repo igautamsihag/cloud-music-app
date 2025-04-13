@@ -7,13 +7,13 @@ const dynamoDBClient = new DynamoDBClient({ region: "us-east-1" });
 const docClient = DynamoDBDocumentClient.from(dynamoDBClient);
 
 router.post("/query", async (req, res) => {
-  console.log("Query received:", req.body);
+  console.log("Query request arrived:", req.body);
   const { title, year, artist, album } = req.body;
 
   try {
     let filterExpression = [];
     let expressionAttributeValues = {};
-    let expressionAttributeNames = {}; // Only include when necessary
+    let expressionAttributeNames = {}; 
 
     if (artist) {
       filterExpression.push("artist = :artist");
@@ -26,7 +26,7 @@ router.post("/query", async (req, res) => {
     if (year) {
       filterExpression.push("#yr = :year");
       expressionAttributeValues[":year"] = year;
-      expressionAttributeNames["#yr"] = "year"; // Only add if year is used
+      expressionAttributeNames["#yr"] = "year"; 
     }
     if (album) {
       filterExpression.push("album = :album");
@@ -39,7 +39,6 @@ router.post("/query", async (req, res) => {
       ExpressionAttributeValues: expressionAttributeValues,
     };
 
-    // Only add ExpressionAttributeNames if year is included
     if (year) {
       params.ExpressionAttributeNames = expressionAttributeNames;
     }
@@ -48,7 +47,7 @@ router.post("/query", async (req, res) => {
 
     res.status(200).json(Items || []);
   } catch (error) {
-    console.error("Error querying data:", error);
+    console.error("Data query failed:", error);
     res.status(500).json({ error: "Failed to retrieve data" });
   }
 });

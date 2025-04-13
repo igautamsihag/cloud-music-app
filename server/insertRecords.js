@@ -1,18 +1,16 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
 const { DynamoDBDocumentClient, BatchWriteCommand } = require('@aws-sdk/lib-dynamodb');
 
-// Initialize DynamoDB client
+
 const client = new DynamoDBClient({
-  region: "us-east-1", // Set your region here // Use the local DynamoDB endpoint
+  region: "us-east-1", 
 });
 
-// Create DynamoDB DocumentClient
 const dynamoDB = DynamoDBDocumentClient.from(client);
 
-const TableName = "login";  // Your DynamoDB table name
+const TableName = "login";  
 
-// Function to insert multiple items in batch
-const batchInsertItems = async (items) => {
+const insertRecords = async (items) => {
   const params = {
     RequestItems: {
       [TableName]: items.map(item => ({
@@ -25,14 +23,13 @@ const batchInsertItems = async (items) => {
 
   try {
     const data = await dynamoDB.send(new BatchWriteCommand(params));
-    console.log("Batch write succeeded:", data);
+    console.log("User records inserted successfully:", data);
   } catch (error) {
-    console.error("Error inserting batch:", error);
+    console.error("User records insertion failed:", error);
   }
 };
 
-// Example records to insert
-const records = [
+const userRecords = [
   { email: "s40710860@student.rmit.edu.au", username: "GautamSihag0", password: "012345" },
   { email: "s40710861@student.rmit.edu.au", username: "GautamSihag1", password: "123456" },
   { email: "s40710862@student.rmit.edu.au", username: "GautamSihag2", password: "234567" },
@@ -45,8 +42,5 @@ const records = [
   { email: "s40710869@student.rmit.edu.au", username: "GautamSihag9", password: "901234" },
 ];
 
-// Main function to execute
-
-  // Insert multiple records in batch
-batchInsertItems(records);
+insertRecords(userRecords);
 

@@ -20,13 +20,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       console.log("Restored user from localStorage:", storedUser);
-      setUser(JSON.parse(storedUser)); // Parse and set user data from localStorage
+      setUser(JSON.parse(storedUser)); 
     }
   }, []);
 
   const login = (userData: User) => {
     console.log("Setting user in AuthContext:", userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Persist login
+    localStorage.setItem("user", JSON.stringify(userData)); 
     setUser(userData);
   };
 
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (!context) throw new Error("useAuth function can be used only with AuthProvider");
   return context;
 };
 
