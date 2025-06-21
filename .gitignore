@@ -1,22 +1,39 @@
-# dependencies
-node_modules/
+# ====================
+# Node.js dependencies
+# ====================
+**/node_modules/
 
-# build files
-dist/
-build/
+# ====================
+# Build output
+# ====================
+**/dist/
+**/build/
 
-# environment files
-.env
+# ====================
+# Environment variables
+# ====================
+**/.env
+**/.env.*   # handles .env.local, .env.production, etc.
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ====================
+# Logs
+# ====================
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
 
+# ====================
 # OS files
+# ====================
 .DS_Store
 Thumbs.db
 
+# ====================
 # IDE/editor settings
+# ====================
 .vscode/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const corsOptions = {
   origin: [
     "http://localhost:3000", 
-    "http://ec2-44-211-177-173.compute-1.amazonaws.com:3000", 
+    "http://54.81.65.129", 
   ],
   credentials: true,
 };

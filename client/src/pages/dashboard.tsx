@@ -54,7 +54,7 @@ export default function Dashboard(){
     
         try {
           console.log("Sending request to:", `${process.env.NEXT_PUBLIC_API_BASE}/api/query`);
-          const response = await fetch(`http://localhost:5000/api/query`, {
+          const response = await fetch(`/5000/api/query`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export default function Dashboard(){
           }
       
           try {
-            const response = await fetch(`http://localhost:5000/api/subscriptions?email=${user.email}`);
+            const response = await fetch(`/5000/api/subscriptions?email=${user.email}`);
             const data = await response.json();
       
             if (response.ok) {
